@@ -1,0 +1,377 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
+  margin: 0;
+  position: relative;
+}
+
+button {
+  border: none;
+}
+
+/* Верх */
+.header-container {
+  display: flex;
+  position: sticky;
+  top: 0;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 500px;
+  background: #fff;
+  padding: 20px;
+  z-index: 100;
+}
+
+.header-container h2 {
+  margin: 0;
+}
+
+.add-task-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add-task-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Счетчики */
+.counter-container {
+  display: flex;
+  justify-content: space-between;
+  background: #a4f4ff;
+  padding: 12px 20px;
+  position: sticky;
+  top: 78px;
+  z-index: 100;
+  box-shadow: 0 4px 6px -4px rgba(0, 0, 0, 0.15)
+}
+
+.counter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.counter-title {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-right: 10px;
+}
+
+.counter-value {
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.counter-delete-btn {
+  background: none;
+  border: none;
+  color: #1b1b1b;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.counter-delete-btn:hover {
+  color: #fff;
+}
+
+/* Список задач */
+.todo-list {
+  max-width: 500px;
+  margin: 10px auto;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.todo-item span {
+  flex: 1;
+  margin-left: 10px;
+}
+
+.todo-item span.completed {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.todo-item input[type="checkbox"] {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+/* Кнопки в задаче */
+.edit-btn, .delete-btn {
+  padding: 5px 10px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.edit-btn {
+  background-color: #007bff;
+  color: white;
+  margin-right: 5px;
+}
+
+.edit-btn:hover {
+  background-color: #0056b3;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #a71d2a;
+}
+
+/* Пустое состояние */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.empty-message {
+  color: #888;
+  font-size: 18px;
+}
+
+.emptyImg {
+    height: 70px;
+    width: 70px;
+    margin-top: 18px;
+}
+
+
+/* Модальное окно */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.addTitle,
+.editTitle {
+  margin: 0;
+}
+
+.modal input {
+  padding: 6px 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.save-btn, 
+.modal-delete-btn, 
+.modal-cancel-btn {
+  height: 30px;
+  width: 60px;
+  border-radius: 4px;
+  font-size: medium;
+  cursor: pointer;
+}
+.save-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.save-btn:hover {
+  background-color: #218838;
+}
+
+.modal-delete-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.modal-delete-btn:hover {
+  background-color: #a71d2a;
+}
+
+.modal-cancel-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.modal-cancel-btn:hover {
+  background-color: #5a6268;
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 10px;
+  }
+
+  button {
+    font-size: 16px;
+  }
+
+  .header-container {
+    max-width: 100%;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .header-container h2 {
+    text-align: center;
+  }
+
+  .add-task-btn {
+    padding: 10px;
+  }
+
+  .todo-list {
+    max-width: 100%;
+  }
+
+  .todo-item {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .todo-item span {
+    flex: 80%;
+    font-size: 16px;
+  }
+
+  .todo-item input[type="checkbox"] {
+    margin-right: 6px;
+    height: 18px;
+    width: 18px;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    padding: 10px;
+    min-width: 40px;
+    min-height: 36px;
+  }
+
+  .emptyImg {
+    width: 60px;
+    height: 60px;
+  }
+
+  .empty-message {
+    font-size: 16px;
+  }
+
+  /* Модалка */
+  .modal {
+    min-width: 250px;
+  }
+
+  .modal input {
+    padding: 8px 10px;
+  }
+
+  .save-btn,
+  .modal-delete-btn,
+  .modal-cancel-btn {
+    height: 36px;
+  }
+}
+
+@media (max-width: 768px) {
+  button {
+    font-size: 16px;
+  }
+
+  .header-container {
+    max-width: 100%;
+  }
+
+  .add-task-btn {
+    padding: 10px;
+  }
+
+  .todo-item {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .todo-item span {
+    flex: 85%;
+    font-size: 16px;
+  }
+
+  .todo-item input[type="checkbox"] {
+    margin-right: 6px;
+    height: 18px;
+    width: 18px;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    padding: 10px;
+    min-width: 40px;
+    min-height: 36px;
+  }
+
+  .emptyImg {
+    width: 60px;
+    height: 60px;
+  }
+
+  .empty-message {
+    font-size: 16px;
+  }
+
+  /* Модалка */
+  .modal {
+    min-width: 50%;
+  }
+
+  .modal input {
+    padding: 8px 10px;
+  }
+
+  .save-btn,
+  .modal-delete-btn,
+  .modal-cancel-btn {
+    height: 36px;
+  }
+}
