@@ -16,7 +16,7 @@ button {
   top: 0;
   justify-content: space-between;
   align-items: center;
-  max-width: 500px;
+  min-width: 200px;
   background: #fff;
   padding: 20px;
   z-index: 100;
@@ -47,7 +47,7 @@ button {
   background: #a4f4ff;
   padding: 12px 20px;
   position: sticky;
-  top: 78px;
+  top: 70px;
   z-index: 100;
   box-shadow: 0 4px 6px -4px rgba(0, 0, 0, 0.15)
 }
@@ -241,10 +241,6 @@ button {
 }
 
 @media (max-width: 480px) {
-  body {
-    padding: 10px;
-  }
-
   button {
     font-size: 16px;
   }
@@ -261,6 +257,10 @@ button {
 
   .add-task-btn {
     padding: 10px;
+  }
+
+  .counter-container {
+    top: 116px;
   }
 
   .todo-list {
