@@ -5,22 +5,16 @@ export class Application {
   #data = [];
 
   constructor() {
-    this.initialize();
-  }
-
-  initialize() {
     this.loadData();
-    this.render();
-    this.setupAddTaskButton();
+    this.renderHeader();
     this.counter = new Counter(this.#data, () => {
-      this.#data = this.#data.filter(t => !t.completed);
-      this.saveData();
-      this.counter.update(this.#data);
-      this.render();
+      this.setData(this.#data.filter(t => !t.completed));
     });
 
-    const header = document.querySelector('.header-container');
-    header.after(this.counter.render());
+    document
+      .querySelector('.header-container')
+      .after(this.counter.render());
+
     this.render();
   }
 
@@ -33,51 +27,54 @@ export class Application {
     localStorage.setItem('todos', JSON.stringify(this.#data));
   }
 
-  render() {
-    const oldList = document.querySelector('.todo-list');
-    const oldEmpty = document.querySelector('.empty');
-    if (oldList) oldList.remove();
-    if (oldEmpty) oldEmpty.remove();
-
-    if (this.#data.length === 0) {
-      const emptyImg = document.createElement('img');
-      emptyImg.src = './smiley.png';
-      emptyImg.alt = 'Cute cat';
-      emptyImg.className = 'emptyImg';
-      const emptyMsg = document.createElement('p');
-      emptyMsg.textContent = 'No Todos yet!';
-      emptyMsg.className = 'empty-message';
-      const container = document.createElement('div');
-      container.className = 'empty'
-      container.appendChild(emptyImg);
-      container.appendChild(emptyMsg);
-      document.body.appendChild(container);
-    } else {
-      const list = new TodoList(this.#data, updated => {
-        this.#data = updated;
-        this.saveData();
-        this.counter.update(this.#data);
-        this.render();
-      });
-      document.body.appendChild(list.render());
-    } 
+  setData(newData) {
+    this.#data = newData;
+    this.saveData();
+    this.counter.update(this.#data);
+    this.render();
   }
 
-  setupAddTaskButton() {
+  renderHeader() {
     const header = document.createElement('div');
     header.className = 'header-container';
 
-    const titleText = document.createElement('h2');
-    titleText.textContent = 'Todo List';
+    const title = document.createElement('h2');
+    title.textContent = 'Todo List';
 
     const addBtn = document.createElement('button');
     addBtn.textContent = 'Add Task';
     addBtn.className = 'add-task-btn';
-
     addBtn.addEventListener('click', () => this.openAddModal());
 
-    header.append(titleText, addBtn);
+    header.append(title, addBtn);
     document.body.prepend(header);
+  }
+
+  render() {
+    document.querySelector('.todo-list')?.remove();
+    document.querySelector('.empty')?.remove();
+
+    if (this.#data.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+
+      const img = document.createElement('img');
+      img.src = './smiley.png';
+      img.className = 'emptyImg';
+
+      const text = document.createElement('p');
+      text.textContent = 'No Todos yet!';
+      text.className = 'empty-message';
+
+      empty.append(img, text);
+      document.body.append(empty);
+    } else {
+      const list = new TodoList(this.#data, data => {
+        this.setData(data);
+      });
+
+      document.body.append(list.render());
+    }
   }
 
   openAddModal() {
@@ -87,13 +84,11 @@ export class Application {
     const modal = document.createElement('div');
     modal.className = 'modal';
 
-    const addTitle = document.createElement('h3');
-    addTitle.className = 'addTitle';
-    addTitle.textContent = 'Add task';
-
     const input = document.createElement('input');
-    input.type = 'text';
-    input.placeholder = 'Enter new task';
+    input.placeholder = 'Enter task';
+
+    const btnContainer = document.createElement('div');
+    btnContainer.className = 'modal-buttons';
 
     const saveBtn = document.createElement('button');
     saveBtn.textContent = 'Add';
@@ -103,31 +98,26 @@ export class Application {
     cancelBtn.textContent = 'Cancel';
     cancelBtn.className = 'modal-cancel-btn';
 
-    const buttonsContainer = document.createElement('div');
-    buttonsContainer.className = 'modal-buttons';
-    buttonsContainer.append(saveBtn, cancelBtn);
+    btnContainer.append(saveBtn, cancelBtn);
+    modal.append(input, btnContainer);
+    overlay.append(modal);
+    document.body.append(overlay);
 
-    modal.append(addTitle, input, buttonsContainer);
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
-
-    // События
-    saveBtn.addEventListener('click', () => addTask());
-
-    const addTask = () => {
+    const add = () => {
       const value = input.value.trim();
       if (!value) return;
-      this.#data.push({ title: value, completed: false });
-      this.saveData();
-      this.render();
+      this.setData([
+        ...this.#data,
+        { title: value, completed: false }
+      ]);
       overlay.remove();
     };
 
-    input.addEventListener('keypress', e => {
-      if (e.key === 'Enter') addTask(); 
-    });
-
+    saveBtn.addEventListener('click', add);
     cancelBtn.addEventListener('click', () => overlay.remove());
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') add();
+    });
 
     overlay.addEventListener('click', e => {
       if (e.target === overlay) overlay.remove();
@@ -136,3 +126,4 @@ export class Application {
     input.focus();
   }
 }
+

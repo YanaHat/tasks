@@ -1,9 +1,10 @@
 import { TodoItem } from './todoItem.js';
 
 export class TodoList {
-  constructor(data, onUpdate) {
+  constructor(data, onChange) {
     this.data = data;
-    this.onUpdate = onUpdate;
+    this.onChange = onChange;
+
     this.element = document.createElement('div');
     this.element.className = 'todo-list';
   }
@@ -13,13 +14,20 @@ export class TodoList {
 
     this.data.forEach(todo => {
       const item = new TodoItem(todo, updated => {
+        let newData = [...this.data];
+
         if (updated.delete) {
-          this.data = this.data.filter(t => t !== todo);
+          newData = newData.filter(t => t !== todo);
+        } else {
+          newData = newData.map(t =>
+            t === todo ? updated : t
+          );
         }
-        this.onUpdate(this.data);
-        this.render();
+
+        this.onChange(newData);
       });
-      this.element.appendChild(item.render());
+
+      this.element.append(item.render());
     });
 
     return this.element;

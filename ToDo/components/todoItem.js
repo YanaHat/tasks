@@ -1,107 +1,89 @@
 export class TodoItem {
-    constructor(data, onUpdate) {
-        this.data = data;
-        this.onUpdate = onUpdate;
-    }
+  constructor(data, onUpdate) {
+    this.data = data;
+    this.onUpdate = onUpdate;
+  }
 
-    render() {
-        const item = document.createElement('div');
-        item.className = 'todo-item';
+  render() {
+    const item = document.createElement('div');
+    item.className = 'todo-item';
 
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.checked = this.data.completed;
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = this.data.completed;
 
-        const title = document.createElement('span');
-        title.textContent = this.data.title;
-        if (this.data.completed) title.classList.add('completed');
+    const title = document.createElement('span');
+    title.textContent = this.data.title;
+    title.classList.toggle('completed', this.data.completed);
 
-        const editBtn = document.createElement('button');
-        editBtn.textContent = 'Edit';
-        editBtn.className = 'edit-btn';
+    const editBtn = document.createElement('button');
+    editBtn.textContent = 'Edit';
+    editBtn.className = 'edit-btn';
 
-        const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = 'X';
-        deleteBtn.className = 'delete-btn';
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'X';
+    deleteBtn.className = 'delete-btn';
 
-        // События
-        checkbox.addEventListener('change', () => {
-            this.data.completed = checkbox.checked;
-            title.classList.toggle('completed', checkbox.checked);
-            this.onUpdate(this.data);
-        });
+    checkbox.addEventListener('change', () => {
+      this.onUpdate({
+        ...this.data,
+        completed: checkbox.checked
+      });
+    });
 
-        deleteBtn.addEventListener('click', () => {
-            this.onUpdate({ ...this.data, delete: true });
-        });
+    deleteBtn.addEventListener('click', () => {
+      this.onUpdate({ ...this.data, delete: true });
+    });
 
-        editBtn.addEventListener('click', () => {
-            this.openEditModal();
-        });
+    editBtn.addEventListener('click', () => this.openEditModal());
+    title.addEventListener('dblclick', () => this.openEditModal());
 
-        title.addEventListener('dblclick', () => {
-            this.openEditModal();
-        });
+    item.append(checkbox, title, editBtn, deleteBtn);
+    return item;
+  }
 
-        item.append(checkbox, title, editBtn, deleteBtn);
-        return item;
-    }
+  openEditModal() {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
 
-    openEditModal() {
-        const overlay = document.createElement('div');
-        overlay.className = 'modal-overlay';
+    const modal = document.createElement('div');
+    modal.className = 'modal';
 
-        const modal = document.createElement('div');
-        modal.className = 'modal';
+    const input = document.createElement('input');
+    input.value = this.data.title;
 
-        const editTitle = document.createElement('h3');
-        editTitle.textContent = 'Edit task';
-        editTitle.className = 'editTitle';
+    const btnContainer = document.createElement('div');
+    btnContainer.className = 'modal-buttons';
 
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = this.data.title;
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = 'Save';
+    saveBtn.className = 'save-btn';
 
-        const saveBtn = document.createElement('button');
-        saveBtn.textContent = 'Save';
-        saveBtn.className = 'save-btn';
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.className = 'modal-delete-btn';
 
-        const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = 'Delete';
-        deleteBtn.className = 'modal-delete-btn';
+    btnContainer.append(saveBtn, deleteBtn);
+    modal.append(input, btnContainer);
+    overlay.append(modal);
+    document.body.append(overlay);
 
-        const buttonsContainer = document.createElement('div');
-        buttonsContainer.className = 'modal-buttons';
-        buttonsContainer.append(saveBtn, deleteBtn);
+    saveBtn.addEventListener('click', () => {
+      const value = input.value.trim();
+      if (!value) return;
+      this.onUpdate({ ...this.data, title: value });
+      overlay.remove();
+    });
 
-        modal.append(editTitle, input, buttonsContainer);
-        overlay.appendChild(modal);
-        document.body.appendChild(overlay);
+    deleteBtn.addEventListener('click', () => {
+      this.onUpdate({ ...this.data, delete: true });
+      overlay.remove();
+    });
 
-        // События
-        const saveTask = () => {
-            const newValue = input.value.trim();
-            if (!newValue) return;
-            this.data.title = newValue;
-            this.onUpdate(this.data);
-            overlay.remove();
-        };
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) overlay.remove();
+    });
 
-        saveBtn.addEventListener('click', saveTask);
-
-        input.addEventListener('keypress', e => {
-            if (e.key === 'Enter') saveTask(); 
-        });
-
-        deleteBtn.addEventListener('click', () => {
-            this.onUpdate({ ...this.data, delete: true });
-            overlay.remove();
-        });
-
-        overlay.addEventListener('click', e => {
-            if (e.target === overlay) overlay.remove();
-        });
-
-        input.focus();
-    }
+    input.focus();
+  }
 }

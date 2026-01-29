@@ -36,10 +36,10 @@ export class Counter {
       deleteBtn.textContent = '✕';
 
       deleteBtn.addEventListener('click', () => {
-        if (this.onClearDone) this.onClearDone();
+        this.onClearDone();
       });
 
-      item.appendChild(deleteBtn);
+      item.append(deleteBtn);
     }
 
     return item;
@@ -51,13 +51,12 @@ export class Counter {
   }
 
   render() {
-    const todoCount = this.data.filter(t => !t.completed).length;
-    const doneCount = this.data.filter(t => t.completed).length;
+    const todo = this.data.filter(t => !t.completed).length;
+    const done = this.data.filter(t => t.completed).length;
 
-    this.todoValue.textContent = todoCount;
-    this.doneValue.textContent = doneCount;
+    this.todoValue.textContent = todo;
+    this.doneValue.textContent = done;
 
     return this.element;
   }
 }
-
