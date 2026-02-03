@@ -1,45 +1,45 @@
 export class TodoItem {
-  constructor(data, onUpdate) {
-    this.data = data;
-    this.onUpdate = onUpdate;
+  constructor(todo, store) {
+    this.todo = todo;
+    this.store = store;
   }
 
   render() {
-    const item = document.createElement('div');
-    item.className = 'todo-item';
+    this.element = document.createElement('div');
+    this.element.className = 'todo-item';
 
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.checked = this.data.completed;
+    this.checkbox = document.createElement('input');
+    this.checkbox.type = 'checkbox';
+    this.checkbox.checked = this.todo.completed;
 
-    const title = document.createElement('span');
-    title.textContent = this.data.title;
-    title.classList.toggle('completed', this.data.completed);
+    this.titleEl = document.createElement('span');
+    this.titleEl.textContent = this.todo.title;
+    this.titleEl.classList.toggle('completed', this.todo.completed);
 
-    const editBtn = document.createElement('button');
-    editBtn.textContent = 'Edit';
-    editBtn.className = 'edit-btn';
+    this.editBtn = document.createElement('button');
+    this.editBtn.textContent = 'Edit';
+    this.editBtn.className = 'edit-btn';
 
-    const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = 'X';
-    deleteBtn.className = 'delete-btn';
+    this.deleteBtn = document.createElement('button');
+    this.deleteBtn.textContent = 'X';
+    this.deleteBtn.className = 'delete-btn';
 
-    checkbox.addEventListener('change', () => {
-      this.onUpdate({
-        ...this.data,
-        completed: checkbox.checked
-      });
-    });
+    this.onToggle = () => {
+      this.store.update(this.todo.id, { completed: this.checkbox.checked });
+    };
+    this.onDelete = () => {
+      this.store.remove(this.todo.id);
+    };
+    this.onEdit = () => this.openEditModal();
+    this.onTitleDbl = () => this.openEditModal();
 
-    deleteBtn.addEventListener('click', () => {
-      this.onUpdate({ ...this.data, delete: true });
-    });
+    this.checkbox.addEventListener('change', this.onToggle);
+    this.deleteBtn.addEventListener('click', this.onDelete);
+    this.editBtn.addEventListener('click', this.onEdit);
+    this.titleEl.addEventListener('dblclick', this.onTitleDbl);
 
-    editBtn.addEventListener('click', () => this.openEditModal());
-    title.addEventListener('dblclick', () => this.openEditModal());
-
-    item.append(checkbox, title, editBtn, deleteBtn);
-    return item;
+    this.element.append(this.checkbox, this.titleEl, this.editBtn, this.deleteBtn);
+    return this.element;
   }
 
   openEditModal() {
@@ -50,7 +50,7 @@ export class TodoItem {
     modal.className = 'modal';
 
     const input = document.createElement('input');
-    input.value = this.data.title;
+    input.value = this.todo.title;
 
     const btnContainer = document.createElement('div');
     btnContainer.className = 'modal-buttons';
@@ -68,22 +68,38 @@ export class TodoItem {
     overlay.append(modal);
     document.body.append(overlay);
 
-    saveBtn.addEventListener('click', () => {
+    const onSave = () => {
       const value = input.value.trim();
       if (!value) return;
-      this.onUpdate({ ...this.data, title: value });
+      this.store.update(this.todo.id, { title: value });
       overlay.remove();
-    });
+    };
 
-    deleteBtn.addEventListener('click', () => {
-      this.onUpdate({ ...this.data, delete: true });
+    const onRemove = () => {
+      this.store.remove(this.todo.id);
       overlay.remove();
-    });
+    };
 
-    overlay.addEventListener('click', e => {
+    const onOverlayClick = (e) => {
       if (e.target === overlay) overlay.remove();
+    };
+
+    saveBtn.addEventListener('click', onSave);
+    deleteBtn.addEventListener('click', onRemove);
+    overlay.addEventListener('click', onOverlayClick);
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') onSave();
     });
 
     input.focus();
+  }
+
+  dispose() {
+    if (!this.element) return;
+    this.checkbox?.removeEventListener('change', this.onToggle);
+    this.deleteBtn?.removeEventListener('click', this.onDelete);
+    this.editBtn?.removeEventListener('click', this.onEdit);
+    this.titleEl?.removeEventListener('dblclick', this.onTitleDbl);
   }
 }

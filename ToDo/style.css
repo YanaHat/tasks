@@ -44,7 +44,7 @@ button {
 .counter-container {
   display: flex;
   justify-content: space-between;
-  background: #a4f4ff;
+  background: #ffffff;
   padding: 12px 20px;
   position: sticky;
   top: 70px;
@@ -59,8 +59,7 @@ button {
 }
 
 .counter-title {
-  font-size: 14px;
-  opacity: 0.8;
+  font-size: 15px;
   margin-right: 10px;
 }
 

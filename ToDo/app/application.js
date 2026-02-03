@@ -1,37 +1,52 @@
-import { TodoList } from '../components/todoList.js';
+// app/application.js
+import { Store } from './store.js';
 import { Counter } from '../components/counter.js';
+import { TodoList } from '../components/todoList.js';
 
 export class Application {
-  #data = [];
-
   constructor() {
-    this.loadData();
+    this.store = new Store();
+    this.store.load();
+
     this.renderHeader();
-    this.counter = new Counter(this.#data, () => {
-      this.setData(this.#data.filter(t => !t.completed));
+
+    // Контейнеры для контента
+    this.root = document.createElement('div');
+    this.root.className = 'app-root';
+    document.body.append(this.root);
+
+    // Компоненты создаём один раз
+    this.counter = new Counter(this.store);
+    document.querySelector('.header-container').after(this.counter.render());
+
+    this.list = new TodoList(this.store);
+    this.root.append(this.list.render());
+
+    // Плашка “пусто”
+    this.empty = document.createElement('div');
+    this.empty.className = 'empty';
+    const img = document.createElement('img');
+    img.src = './smiley.png';
+    img.className = 'emptyImg';
+    const text = document.createElement('p');
+    text.textContent = 'No Todos yet!';
+    text.className = 'empty-message';
+    this.empty.append(img, text);
+    this.root.append(this.empty);
+
+    // Следим за состоянием и показываем/прячем empty
+    this.unsubscribe = this.store.subscribe((data) => {
+      this.empty.style.display = data.length === 0 ? '' : 'none';
     });
-
-    document
-      .querySelector('.header-container')
-      .after(this.counter.render());
-
-    this.render();
+    // Инициируем видимость
+    this.empty.style.display = this.store.data.length === 0 ? '' : 'none';
   }
 
-  loadData() {
-    const raw = localStorage.getItem('todos');
-    this.#data = raw ? JSON.parse(raw) : [];
-  }
-
-  saveData() {
-    localStorage.setItem('todos', JSON.stringify(this.#data));
-  }
-
-  setData(newData) {
-    this.#data = newData;
-    this.saveData();
-    this.counter.update(this.#data);
-    this.render();
+  destroy() {
+    // На случай, если нужно демонтировать
+    this.unsubscribe?.();
+    this.counter?.dispose();
+    this.list?.dispose();
   }
 
   renderHeader() {
@@ -48,33 +63,6 @@ export class Application {
 
     header.append(title, addBtn);
     document.body.prepend(header);
-  }
-
-  render() {
-    document.querySelector('.todo-list')?.remove();
-    document.querySelector('.empty')?.remove();
-
-    if (this.#data.length === 0) {
-      const empty = document.createElement('div');
-      empty.className = 'empty';
-
-      const img = document.createElement('img');
-      img.src = './smiley.png';
-      img.className = 'emptyImg';
-
-      const text = document.createElement('p');
-      text.textContent = 'No Todos yet!';
-      text.className = 'empty-message';
-
-      empty.append(img, text);
-      document.body.append(empty);
-    } else {
-      const list = new TodoList(this.#data, data => {
-        this.setData(data);
-      });
-
-      document.body.append(list.render());
-    }
   }
 
   openAddModal() {
@@ -106,10 +94,7 @@ export class Application {
     const add = () => {
       const value = input.value.trim();
       if (!value) return;
-      this.setData([
-        ...this.#data,
-        { title: value, completed: false }
-      ]);
+      this.store.add(value);
       overlay.remove();
     };
 
@@ -118,7 +103,6 @@ export class Application {
     input.addEventListener('keydown', e => {
       if (e.key === 'Enter') add();
     });
-
     overlay.addEventListener('click', e => {
       if (e.target === overlay) overlay.remove();
     });
@@ -126,4 +110,3 @@ export class Application {
     input.focus();
   }
 }
-

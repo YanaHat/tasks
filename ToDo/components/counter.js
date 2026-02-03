@@ -1,7 +1,6 @@
 export class Counter {
-  constructor(data, onClearDone) {
-    this.data = data;
-    this.onClearDone = onClearDone;
+  constructor(store) {
+    this.store = store;
 
     this.element = document.createElement('div');
     this.element.className = 'counter-container';
@@ -13,8 +12,8 @@ export class Counter {
     this.doneValue = this.doneItem.querySelector('.counter-value');
 
     this.element.append(this.todoItem, this.doneItem);
-
-    this.render();
+    
+    this.unsubscribe = this.store.subscribe(() => this.render());
   }
 
   createItem(titleText, withDelete = false) {
@@ -33,30 +32,33 @@ export class Counter {
     if (withDelete) {
       const deleteBtn = document.createElement('button');
       deleteBtn.className = 'counter-delete-btn';
-      deleteBtn.textContent = '✕';
+      deleteBtn.textContent = 'X';
 
-      deleteBtn.addEventListener('click', () => {
-        this.onClearDone();
-      });
+      this.onClearClick = () => this.store.clearCompleted();
+      deleteBtn.addEventListener('click', this.onClearClick);
 
+      this.deleteBtn = deleteBtn;
       item.append(deleteBtn);
     }
 
     return item;
   }
 
-  update(data) {
-    this.data = data;
-    this.render();
-  }
-
+  
   render() {
-    const todo = this.data.filter(t => !t.completed).length;
-    const done = this.data.filter(t => t.completed).length;
-
+    const data = this.store.data;
+    const todo = data.filter(t => !t.completed).length;
+    const done = data.filter(t => t.completed).length;
     this.todoValue.textContent = todo;
     this.doneValue.textContent = done;
-
     return this.element;
   }
+
+  dispose() {
+    this.unsubscribe?.();
+    if (this.deleteBtn && this.onClearClick) {
+      this.deleteBtn.removeEventListener('click', this.onClearClick);
+    }
+  }
+
 }
