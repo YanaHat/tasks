@@ -1,4 +1,3 @@
-// app/application.js
 import { Store } from './store.js';
 import { Counter } from '../components/counter.js';
 import { TodoList } from '../components/todoList.js';
@@ -10,19 +9,16 @@ export class Application {
 
     this.renderHeader();
 
-    // Контейнеры для контента
     this.root = document.createElement('div');
     this.root.className = 'app-root';
     document.body.append(this.root);
 
-    // Компоненты создаём один раз
     this.counter = new Counter(this.store);
     document.querySelector('.header-container').after(this.counter.render());
 
     this.list = new TodoList(this.store);
     this.root.append(this.list.render());
 
-    // Плашка “пусто”
     this.empty = document.createElement('div');
     this.empty.className = 'empty';
     const img = document.createElement('img');
@@ -34,16 +30,13 @@ export class Application {
     this.empty.append(img, text);
     this.root.append(this.empty);
 
-    // Следим за состоянием и показываем/прячем empty
     this.unsubscribe = this.store.subscribe((data) => {
       this.empty.style.display = data.length === 0 ? '' : 'none';
     });
-    // Инициируем видимость
     this.empty.style.display = this.store.data.length === 0 ? '' : 'none';
   }
 
   destroy() {
-    // На случай, если нужно демонтировать
     this.unsubscribe?.();
     this.counter?.dispose();
     this.list?.dispose();
