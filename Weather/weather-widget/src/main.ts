@@ -1,5 +1,5 @@
 import { fetchWeather } from "./api";
-import { renderWeather } from "./render";
+import { renderWeather, renderError } from "./render";
 import { saveCity, getHistory } from "./storage";
 
 const input = document.getElementById("cityInput") as HTMLInputElement;
@@ -18,7 +18,14 @@ button.addEventListener("click", async () => {
     renderHistory();
     errorDiv.textContent = "";
   } catch (error) {
-    errorDiv.textContent = "City not found, please try again";
+    renderError("We couldn't find the location you're looking for.");
+    errorDiv.textContent = "";
+  }
+});
+
+input.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    button.click(); 
   }
 });
 
