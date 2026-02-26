@@ -1,0 +1,76 @@
+.weatherLoad .inf{
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 30px 0;
+}
+
+.weatherLoad .nameCountry {
+  height: 30px;
+  width: 60%;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.weatherLoad .data {
+  height: 20px;
+  width: 50%;
+  border-radius: 5px;
+  background-color: rgba(148, 163, 184, 0.25);
+  margin-bottom: 10px;
+}
+
+.weatherLoad .temp {
+  height: 50px;
+  width: 20%;
+  margin-top: 10px;
+  border-radius: 16px;
+  background-color: rgba(144, 144, 144, 0.25);
+}
+
+.weatherLoad .temp span{
+  height: 50px;
+  margin-left: 15px;
+  border-radius: 16px;
+  background-color: rgba(144, 144, 144, 0.25);
+}
+
+.weatherLoad .description {
+  height: 25px;
+  width: 40%;
+  margin-top: 10px;
+  border-radius: 10px;
+  background-color: rgb(43 140 238 / 0.25);
+}
+
+.weatherLoad .nameCountry,
+.weatherLoad .data,
+.weatherLoad .temp,
+.weatherLoad .description {
+  color: transparent;
+}
+
+.loadingOverlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: rgba(55, 55, 55, 0.2);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 1000;
+}
+
+.container {
+  position: relative;
+}
+
+.container.loading .loadingOverlay {
+  opacity: 1;
+  pointer-events: all;
+}
