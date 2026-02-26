@@ -13,6 +13,10 @@ export function renderWeather(data: WeatherResponse) {
     const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
     const mapUrl = `https://www.google.com/maps/search/?api=1&query=${data.name}`;
 
+    document.querySelector(".container")?.classList.remove("loading");
+    document.getElementById("weatherContainer")?.classList.remove("weatherLoad");
+    document.querySelector(".search")?.classList.remove("searchError");
+
     container.innerHTML = `
         <div class="inf">
             <img class="iconW" src="${iconUrl}" alt="weather icon" />
@@ -55,8 +59,57 @@ export function renderWeather(data: WeatherResponse) {
     `;
 }
 
+export function renderLoading() {
+    document.querySelector(".container")?.classList.add("loading");
+    document.getElementById("weatherContainer")?.classList.add("weatherLoad");
+    document.querySelector(".search")?.classList.remove("searchError");
+    const container = document.getElementById("weatherContainer")!;
+    container.innerHTML = `
+        <div class="inf">
+            <h2 class="nameCountry">     </h2>
+            <p class="data">  </p>
+            <h1 class="temp">   <span>   </span></h1>
+            <p class="description">  </p>
+        </div>    
+        <div class="grid">
+            <div class="card">
+                <span class="material-symbols-outlined text-primary mb-2"></span>
+                <p></p>
+                <h3></h3>
+            </div>
+            <div class="card">
+                <span class="material-symbols-outlined text-primary mb-2"></span>
+                <p></p>
+                <h3></h3>
+            </div>
+            <div class="card">
+                <span class="material-symbols-outlined text-primary mb-2"></span>
+                <p></p>
+                <h3></h3>
+            </div>
+            <div class="card">
+                <span class="material-symbols-outlined text-primary mb-2"></span>
+                <p></p>
+                <h3></h3>
+            </div>
+        </div>
+        <div class="map">
+            <div class="mapBtn">
+                <div>
+                    <span class="material-symbols-outlined text-primary">location_on</span>
+                    <a href="" target="_blank" class="map-btn">Loading map data ...</a>
+                </div>    
+            </div>    
+        </div>
+    `;
+}
+
 export function renderError(message: string) {
     const container = document.getElementById("weatherContainer")!;
+
+    document.querySelector(".container")?.classList.remove("loading");
+    document.getElementById("weatherContainer")?.classList.remove("weatherLoad");
+    document.querySelector(".search")?.classList.add("searchError");
 
     container.innerHTML = `
         <div class="errorState">

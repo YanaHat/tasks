@@ -1,24 +1,28 @@
 import { fetchWeather } from "./api";
-import { renderWeather, renderError } from "./render";
+import { renderWeather, renderLoading, renderError } from "./render";
 import { saveCity, getHistory } from "./storage";
 
 const input = document.getElementById("cityInput") as HTMLInputElement;
 const button = document.getElementById("searchBtn") as HTMLButtonElement;
 const errorDiv = document.getElementById("errorMessage")!;
 
+function delay(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 button.addEventListener("click", async () => {
   const city = input.value.trim();
   if (!city) return;
 
   try {
-    errorDiv.textContent = "Loading...";
+    renderLoading();
+    await delay(10000);
     const data = await fetchWeather(city);
     renderWeather(data);
     saveCity(city);  
     renderHistory();
-    errorDiv.textContent = "";
   } catch (error) {
-    renderError("We couldn't find the location you're looking for.");
+    renderError("We couldn't find the location you're looking for. Please check the spelling or try searching for a larger city.");
     errorDiv.textContent = "";
   }
 });
