@@ -23,16 +23,7 @@ export class TodoItem {
     this.deleteBtn = document.createElement('button');
     this.deleteBtn.textContent = 'X';
     this.deleteBtn.className = 'delete-btn';
-
-    this.onToggle = () => {
-      this.store.update(this.todo.id, { completed: this.checkbox.checked });
-    };
-    this.onDelete = () => {
-      this.store.remove(this.todo.id);
-    };
-    this.onEdit = () => this.openEditModal();
-    this.onTitleDbl = () => this.openEditModal();
-
+    
     this.checkbox.addEventListener('change', this.onToggle);
     this.deleteBtn.addEventListener('click', this.onDelete);
     this.editBtn.addEventListener('click', this.onEdit);
@@ -41,6 +32,16 @@ export class TodoItem {
     this.element.append(this.checkbox, this.titleEl, this.editBtn, this.deleteBtn);
     return this.element;
   }
+
+  onToggle = () => {
+    this.store.update(this.todo.id, { completed: this.checkbox.checked });
+  };
+  onDelete = () => {
+    this.store.remove(this.todo.id);
+  };
+
+  onEdit = () => this.openEditModal();
+  onTitleDbl = () => this.openEditModal();
 
   openEditModal() {
     const overlay = document.createElement('div');

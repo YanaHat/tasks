@@ -16,7 +16,7 @@ button.addEventListener("click", async () => {
 
   try {
     renderLoading();
-    await delay(10000);
+    await delay(1500);
     const data = await fetchWeather(city);
     renderWeather(data);
     saveCity(city);  
@@ -52,8 +52,15 @@ function renderHistory() {
       const city = (btn as HTMLElement).dataset.city!;
       input.value = city;
 
-      const data = await fetchWeather(city);
-      renderWeather(data);
+      btn.addEventListener("click", async () => {
+        try {
+          renderLoading();
+          const data = await fetchWeather(city);
+          renderWeather(data);
+        } catch {
+          renderError("Failed to load weather data.");
+        }
+      });
     });
   });
 }
