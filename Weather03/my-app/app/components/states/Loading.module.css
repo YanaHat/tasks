@@ -1,0 +1,116 @@
+.inf{
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 30px 0;
+}
+
+.nameCountry {
+  height: 30px;
+  width: 60%;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.data {
+  height: 20px;
+  width: 50%;
+  border-radius: 5px;
+  background-color: rgba(148, 163, 184, 0.25);
+  margin-bottom: 10px;
+}
+
+.temp {
+  height: 50px;
+  width: 20%;
+  margin-top: 10px;
+  border-radius: 16px;
+  background-color: rgba(144, 144, 144, 0.25);
+}
+
+.description {
+  height: 25px;
+  width: 40%;
+  margin-top: 10px;
+  border-radius: 10px;
+  background-color: rgb(43 140 238 / 0.25);
+}
+
+.nameCountry,
+.data,
+.temp,
+.description {
+  color: transparent;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  padding: 20px;
+}
+
+.card {
+  height: 100px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card p, .card h3 {
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 4px;
+  margin: 0;
+}
+
+.card span {
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 50%;
+  margin: 0;
+  height: 25px; 
+  width: 25px;
+}
+
+.card p { 
+  height: 15px; 
+  width: 50%; 
+}
+.card h3 { 
+  height: 25px; 
+  width: 80%; 
+}
+
+.mapContainer {
+  height: 250px;
+  margin: 20px;
+  border-radius: 16px;
+  background: rgba(144, 144, 144, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mapBtn {
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+}
+
+.nameCountry, .data, 
+.temp, .description, 
+.card, .mapContainer {
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}

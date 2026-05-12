@@ -1,0 +1,118 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  padding: 80px 0;
+  width: 55%;
+}
+
+.errorIco {
+  font-size: 5rem;
+  line-height: 1;
+  position: relative;
+  text-align: center;
+  color: rgb(248 113 113 / 0.8);
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+  margin: 0;
+  margin-bottom: 8px;
+  color: #ffffff;
+}
+
+.subtitle {
+  font-size: 16px;
+  font-weight: 400;
+  color: rgb(148 163 184);
+}
+
+.message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  text-transform: uppercase;
+  color: rgb(248 113 113 / 0.6);
+  margin-top: 32px;
+}
+
+.message .material-symbols-outlined {
+  font-size: 18px;
+  line-height: 28px;
+  margin: 0;
+}
+
+.card {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  color: rgb(148 163 184);
+}
+
+.card p {
+  color: rgba(148, 163, 184, 0.502);
+}
+
+.card:hover {
+  transform: none;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  text-align: center;
+  transition: transform 0.2s ease;
+  padding: 20px;
+}
+
+.map {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  height: 128px;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.mapBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+}
+
+.mapBtn .errorMapMessage {
+  color: rgb(180 180 180);
+  font-weight: 500;
+  font-size: 14px;
+}
