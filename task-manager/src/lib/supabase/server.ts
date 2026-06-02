@@ -11,13 +11,13 @@ export const createClient = () => {
     env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
-        getAll() {
-          return cookieStore.getAll()
+        async getAll() {
+          return (await cookieStore).getAll()
         },
         setAll(cookiesToSet) {
           try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
+            cookiesToSet.forEach(async ({ name, value, options }) =>
+              (await cookieStore).set(name, value, options)
             )
           } catch {
             // Метод setAll может быть вызван внутри Server Component.

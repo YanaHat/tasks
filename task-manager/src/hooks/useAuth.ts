@@ -80,7 +80,6 @@ export function useAuth() {
       email,
       password,
       options: {
-        // Данные передаются в raw_user_meta_data для нашего триггера в Postgres
         data: {
           display_name: displayName,
         },
