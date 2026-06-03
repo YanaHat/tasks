@@ -16,21 +16,31 @@ export function useAuth() {
 
   // Функция для получения профиля пользователя по его ID
   async function fetchUserProfile(userId: string): Promise<AuthUser | null> {
-    const { data: profile, error } = await supabase
-      .from('profiles')
-      .select('id, display_name, role')
-      .eq('id', userId)
-      .single()
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('id, display_name, role')
+        .eq('id', userId)
+        .maybeSingle() // Ипользуем maybeSingle вместо single, чтобы не падать в эксепшен, если профиля нет
 
-    if (error || !profile) {
+      if (error || !profile) {
+        console.error('Profile fetch error or empty:', error)
+        // Если профиля временно нет в таблице public.profiles, возвращаем дефолтного юзера, чтобы не вешать приложение
+        return {
+          id: userId,
+          display_name: 'Workspace Member',
+          role: 'user',
+        }
+      }
+
+      return {
+        id: profile.id,
+        display_name: profile.display_name,
+        role: profile.role as 'user' | 'admin',
+      }
+    } catch (err) {
+      console.error('Catch error in fetchUserProfile:', err)
       return null
-    }
-
-    // Возвращаем объект, который гарантированно подходит под наш Discriminated Union
-    return {
-      id: profile.id,
-      display_name: profile.display_name,
-      role: profile.role as 'user' | 'admin',
     }
   }
 

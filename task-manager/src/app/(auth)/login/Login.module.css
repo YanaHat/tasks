@@ -1,0 +1,216 @@
+.loginCard {
+  width: 100%;
+  max-width: 440px;
+  background-color: var(--surface-container-lowest, #ffffff);
+  padding: 40px; 
+  border-radius: 12px; 
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(195, 198, 215, 0.3); 
+  box-sizing: border-box;
+  align-self: center;
+}
+
+.textCenter {
+  text-align: center;
+  margin-bottom: 24px; 
+}
+
+.fontHeadline {
+  font-family: 'Inter', sans-serif;
+  font-size: 24px; 
+  line-height: 32px;
+  font-weight: 600;
+  color: var(--on-surface, #191b23);
+  margin: 0 0 8px 0; 
+}
+
+.fontBody {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px; 
+  line-height: 20px;
+  font-weight: 400;
+  color: var(--on-surface-variant, #434655);
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; 
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px; 
+}
+
+.labelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.label {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px; /* font-label-md */
+  font-weight: 500;
+  color: var(--on-surface-variant, #434655);
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  position: absolute;
+  left: 16px;
+  color: var(--outline, #737686);
+  pointer-events: none;
+  user-select: none;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 16px 12px 44px; 
+  background-color: var(--surface-container-low, #f3f3fe);
+  border: 1px solid var(--outline-variant, #c3c6d7);
+  border-radius: 8px; 
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--on-surface, #191b23);
+  outline: none;
+  transition: all 0.15s ease-in-out;
+  box-sizing: border-box;
+}
+
+.input::placeholder {
+  color: var(--outline, #737686);
+  opacity: 0.6;
+}
+
+.input:focus {
+  border-color: var(--primary, #004ac6);
+  box-shadow: 0 0 0 4px rgba(0, 74, 198, 0.1); 
+}
+
+.eyeButton {
+  position: absolute;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--outline, #737686);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+
+.eyeButton:hover {
+  color: var(--on-surface, #191b23);
+}
+
+.link {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px; 
+  color: var(--primary, #004ac6);
+  text-decoration: none;
+  transition: text-decoration 0.15s ease;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 8px; 
+  padding: 4px 0;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 12px 24px;
+  background-color: var(--primary, #004ac6);
+  color: var(--on-primary, #ffffff);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px; 
+  transition: all 0.15s ease-in-out;
+}
+
+.submitButton:hover {
+  background-color: var(--on-primary-fixed-variant, #003ea8);
+}
+
+.submitButton:active {
+  transform: scale(0.98);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.serverError {
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: var(--error-container, #ffdad6);
+  color: var(--on-error-container, #93000a);
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(186, 26, 26, 0.2);
+}
+
+.errorText {
+  color: var(--error, #ba1a1a);
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 4px;
+  margin-top: 2px;
+}
+
+.footerRow {
+  margin-top: 40px; 
+  padding-top: 16px; 
+  border-top: 1px solid rgba(195, 198, 215, 0.2);
+  text-align: center;
+}
+
+.registerText {
+  color: var(--on-surface-variant, #434655);
+  font-size: 14px;
+  margin: 0;
+}
+
+.registerLink {
+  color: var(--primary, #004ac6);
+  font-weight: 600;
+  text-decoration: none;
+  text-underline-offset: 4px;
+}
+
+.registerLink:hover {
+  text-decoration: underline;
+}

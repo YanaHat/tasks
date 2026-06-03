@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { registerSchema, RegisterFormData } from '@/lib/validations/auth.schema'
+import classes from './Register.module.css'
 
 export default function RegisterPage() {
   const { register: signUp } = useAuth()
@@ -33,81 +34,85 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="w-full max-w-[440px] bg-surface-container-lowest p-xl rounded-xl border border-outline-variant/30 shadow-sm">
-      <div className="text-center mb-lg">
-        <h1 className="font-headline-lg text-headline-lg text-on-surface mb-sm">Create an Account</h1>
-        <p className="font-body-md text-on-surface-variant">Get started with TaskEngine today.</p>
+    <div className={classes.registerCard}>
+      <div className={classes.textCenter}>
+        <h1 className={classes.fontHeadline}>Create an Account</h1>
+        <p className={classes.fontBody}>Get started with TaskEngine today.</p>
       </div>
 
       {serverError && (
-        <div className="mb-md p-sm bg-error-container text-on-error-container text-body-md rounded-lg border border-error/20">
+        <div className={classes.serverError}>
           {serverError}
         </div>
       )}
 
-      <form className="space-y-md" onSubmit={handleSubmit(
+      <form 
+        className={classes.form} 
+        onSubmit={handleSubmit(
           (data) => onSubmit(data),
-          (errors) => console.log("Ошибки валидации формы Регистрации:", errors) // 👈 Выведет проблему в консоль F12
-      )}>
-        <div className="flex flex-col gap-xs">
-          <label className="font-label-md text-on-surface-variant ml-xs" htmlFor="displayName">Display Name</label>
-          <div className="relative flex items-center">
-            <span className="material-symbols-outlined absolute left-md text-outline">person</span>
+          (errors) => console.log("Ошибки валидации формы Регистрации:", errors)
+        )}
+      >
+        <div className={classes.fieldGroup}>
+          <label className={`${classes.label} ml-xs`} htmlFor="displayName">Display Name</label>
+          <div className={classes.inputWrapper}>
+            <span className={`material-symbols-outlined ${classes.icon}`}>person</span>
             <input
               {...register('displayName')}
-              className="w-full pl-[44px] pr-md py-sm bg-surface-container-low border border-outline-variant rounded-lg focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none placeholder:text-outline/60 text-on-surface"
+              className={classes.input}
               id="displayName"
               placeholder="John Doe"
               type="text"
             />
           </div>
-          {errors.displayName && <span className="text-error text-label-sm ml-xs">{errors.displayName.message}</span>}
+          {errors.displayName && <span className={classes.errorText}>{errors.displayName.message}</span>}
         </div>
 
-        <div className="flex flex-col gap-xs">
-          <label className="font-label-md text-on-surface-variant ml-xs" htmlFor="email">Email</label>
-          <div className="relative flex items-center">
-            <span className="material-symbols-outlined absolute left-md text-outline">mail</span>
+        <div className={classes.fieldGroup}>
+          <label className={`${classes.label} ml-xs`} htmlFor="email">Email</label>
+          <div className={classes.inputWrapper}>
+            <span className={`material-symbols-outlined ${classes.icon}`}>mail</span>
             <input
               {...register('email')}
-              className="w-full pl-[44px] pr-md py-sm bg-surface-container-low border border-outline-variant rounded-lg focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none placeholder:text-outline/60 text-on-surface"
+              className={classes.input}
               id="email"
               placeholder="name@company.com"
               type="email"
             />
           </div>
-          {errors.email && <span className="text-error text-label-sm ml-xs">{errors.email.message}</span>}
+          {errors.email && <span className={classes.errorText}>{errors.email.message}</span>}
         </div>
 
-        <div className="flex flex-col gap-xs">
-          <label className="font-label-md text-on-surface-variant ml-xs" htmlFor="password">Password</label>
-          <div className="relative flex items-center">
-            <span className="material-symbols-outlined absolute left-md text-outline">lock</span>
+        <div className={classes.fieldGroup}>
+          <label className={`${classes.label} ml-xs`} htmlFor="password">Password</label>
+          <div className={classes.inputWrapper}>
+            <span className={`material-symbols-outlined ${classes.icon}`}>lock</span>
             <input
               {...register('password')}
-              className="w-full pl-[44px] pr-md py-sm bg-surface-container-low border border-outline-variant rounded-lg focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none text-on-surface"
+              className={classes.input}
               id="password"
               placeholder="••••••••"
               type="password"
             />
           </div>
-          {errors.password && <span className="text-error text-label-sm ml-xs">{errors.password.message}</span>}
+          {errors.password && <span className={classes.errorText}>{errors.password.message}</span>}
         </div>
 
+        {/* Action Button */}
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full py-md bg-primary text-on-primary font-headline-md rounded-lg shadow-sm hover:bg-on-primary-fixed-variant active:scale-[0.98] transition-all flex items-center justify-center gap-sm mt-lg disabled:opacity-50"
+          className={classes.submitButton}
         >
           {isSubmitting ? 'Creating Account...' : 'Register'}
           <span className="material-symbols-outlined text-[18px]">person_add</span>
         </button>
       </form>
 
-      <div className="mt-xl pt-lg border-t border-outline-variant/20 text-center">
-        <p className="font-body-md text-on-surface-variant">
+      <div className={classes.footerRow}>
+        <p className={classes.loginText}>
           Already have an account?{" "}
-          <Link className="text-primary font-semibold hover:underline decoration-2 underline-offset-4" href="/login">
+          <Link className={classes.loginLink} href="/login">
             Sign In
           </Link>
         </p>
