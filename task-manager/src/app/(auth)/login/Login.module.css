@@ -54,7 +54,7 @@
 
 .label {
   font-family: 'Inter', sans-serif;
-  font-size: 12px; /* font-label-md */
+  font-size: 12px; 
   font-weight: 500;
   color: var(--on-surface-variant, #434655);
 }
@@ -70,7 +70,6 @@
   left: 16px;
   color: var(--outline, #737686);
   pointer-events: none;
-  user-select: none;
 }
 
 .input {

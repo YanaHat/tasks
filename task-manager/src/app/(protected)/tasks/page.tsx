@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { TaskCard } from '@/components/tasks/TaskCard'
 import { revalidatePath } from 'next/cache'
 import type { Database } from '@/types/supabase'
+import styles from './Tasksp.module.css'
 
 type Task = Database['public']['Tables']['tasks']['Row']
 
@@ -45,58 +46,47 @@ export default async function TasksPage() {
   }
 
   return (
-    <div className="space-y-lg max-w-container-max mx-auto w-full animate-in fade-in duration-300">
-      {/* Шапка контентной области */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-md border-b border-outline-variant/10 pb-md">
+    <div className={styles.container}>
+      <div className={styles.header}>
         <div>
-          <h2 className="font-headline-xl text-headline-xl text-on-surface">My Workspace</h2>
-          <p className="text-on-surface-variant font-body-lg">Review your pending actions, check deadlines, and update status blocks.</p>
+          <h2 className={styles.title}>My Workspace</h2>
+          <p className={styles.subtitle}>Review your pending actions, check deadlines, and update status blocks.</p>
         </div>
-        <Link 
-          href="/tasks/new"
-          className="flex items-center justify-center gap-xs px-md py-sm bg-primary text-on-primary rounded-xl font-label-md text-label-md hover:bg-primary-container transition-colors shadow-md active:scale-95 flex-shrink-0"
-        >
-          <span className="material-symbols-outlined text-[18px]">add</span>
+        <Link href="/tasks/new" className={styles.addButton}>
+          <span className="material-symbols-outlined">add</span>
           Add Task
         </Link>
       </div>
 
-      {/* Список задач */}
-      <div className="space-y-sm">
+      <div className={styles.list}>
         {tasks && tasks.length > 0 ? (
           tasks.map((task) => (
-            // Оборачиваем каждую карточку в нативную форму для отработки Server Actions без JS
             <form key={task.id} action={updateTaskStatusAction}>
               <input type="hidden" name="taskId" value={task.id} />
+              <input type="hidden" id={`status-input-${task.id}`} name="status" defaultValue={task.status} />
+              
+              <button type="submit" id={`submit-btn-${task.id}`} className={styles.hiddenSubmit} />
+
               <TaskCard 
                 task={task} 
                 onStatusChange={(id, nextStatus) => {
-                  // Создаем искусственное отправление формы при изменении селекта
-                  const form = document.querySelector(`form input[value="${id}"]`)?.parentElement as HTMLFormElement
-                  if (form) {
-                    const formData = new FormData(form)
-                    formData.set('status', nextStatus)
-                    
-                    // Передаем данные на сервер через встроенный fetch механизм Next.js
-                    const submitForm = async () => {
-                      const response = await fetch(window.location.href, {
-                        method: 'POST',
-                        body: formData,
-                        headers: { 'accept': 'text/x-component' }
-                      })
-                      if (response.ok) window.location.reload()
-                    }
-                    submitForm()
+                  // 1. Находим скрытый инпут статуса именно этой формы и меняем значение
+                  const statusInput = document.getElementById(`status-input-${id}`) as HTMLInputElement
+                  const submitBtn = document.getElementById(`submit-btn-${id}`) as HTMLButtonElement
+                  
+                  if (statusInput && submitBtn) {
+                    statusInput.value = nextStatus
+                    submitBtn.click()
                   }
                 }}
               />
             </form>
           ))
         ) : (
-          <div className="text-center py-xl bg-surface-container-low border border-dashed border-outline-variant rounded-xl p-lg">
-            <span className="material-symbols-outlined text-outline text-3xl mb-sm block">task</span>
-            <p className="text-on-surface font-label-md font-bold">No tasks found</p>
-            <p className="text-on-surface-variant text-xs mt-xs">Get started by creating your very first task above.</p>
+          <div className={styles.emptyState}>
+            <span className={`material-symbols-outlined ${styles.emptyIcon}`}>task</span>
+            <p className={styles.emptyTitle}>No tasks found</p>
+            <p className={styles.emptySubtitle}>Get started by creating your very first task above.</p>
           </div>
         )}
       </div>

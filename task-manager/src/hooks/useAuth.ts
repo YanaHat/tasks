@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -14,64 +16,92 @@ export function useAuth() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Функция для получения профиля пользователя по его ID
+  // Функция для получения профиля пользователя по его ID с ограничением по времени
   async function fetchUserProfile(userId: string): Promise<AuthUser | null> {
-    try {
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('id, display_name, role')
-        .eq('id', userId)
-        .maybeSingle() // Ипользуем maybeSingle вместо single, чтобы не падать в эксепшен, если профиля нет
+    const defaultUser: AuthUser = {
+      id: userId,
+      display_name: 'Workspace Member',
+      role: 'user',
+    }
 
-      if (error || !profile) {
-        console.error('Profile fetch error or empty:', error)
-        // Если профиля временно нет в таблице public.profiles, возвращаем дефолтного юзера, чтобы не вешать приложение
-        return {
-          id: userId,
-          display_name: 'Workspace Member',
-          role: 'user',
-        }
+    try {
+      console.log('--- [useAuth] Шаг 2: Начинаем запрос профиля для ID:', userId)
+
+      // Гонка: запрос к базе против таймаута в 1.5 секунды
+      const profileData = await Promise.race([
+        supabase
+          .from('profiles')
+          .select('id, display_name, role')
+          .eq('id', userId)
+          .maybeSingle(),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout')), 1500)
+        )
+      ]) as any
+
+      const { data: profile, error: dbError } = profileData
+
+      if (dbError || !profile) {
+        console.log('--- [useAuth] Шаг 2a: Профиль не найден, выдаем дефолт:', dbError)
+        return defaultUser
       }
 
+      console.log('--- [useAuth] Шаг 2б: Профиль успешно получен:', profile)
       return {
         id: profile.id,
         display_name: profile.display_name,
         role: profile.role as 'user' | 'admin',
       }
     } catch (err) {
-      console.error('Catch error in fetchUserProfile:', err)
-      return null
+      console.warn('--- [useAuth] Запрос профиля завис или упал, используем дефолтный профиль:', err)
+      return defaultUser
     }
   }
 
   // Следим за состоянием сессии при инициализации приложения
   useEffect(() => {
     const initializeAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      
-      if (session?.user) {
-        const profile = await fetchUserProfile(session.user.id)
-        setUser(profile)
-      } else {
-        setUser(null)
-      }
-      setLoading(false)
-    }
-
-    initializeAuth()
-
-    // Подписываемся на изменения состояния (login / logout)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        
         if (session?.user) {
           const profile = await fetchUserProfile(session.user.id)
           setUser(profile)
         } else {
           setUser(null)
         }
+      } catch (err) {
+        console.error('--- [useAuth] Ошибка инициализации сессии:', err)
+      } finally {
         setLoading(false)
+      }
+    }
+
+    initializeAuth()
+
+    // Подписываемся на изменения состояния (login / logout / session refresh)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('--- [useAuth] Событие:', event)
+
+        if (session?.user) {
+          // Запрашиваем профиль (он разрешится либо базой, либо таймаутом через 1.5 сек)
+          const profile = await fetchUserProfile(session.user.id)
+          setUser(profile)
+          
+          // Проверяем, где находится пользователь
+          const isAuthPage = window.location.pathname === '/login' || window.location.pathname === '/register'
+          
+          if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && isAuthPage) {
+            console.log('--- [useAuth] Редирект подтвержден! Уводим на /tasks')
+            window.location.href = '/tasks'
+            return
+          }
+        } else {
+          setUser(null)
+        }
         
-        // Освежаем роуты при изменении состояния авторизации
+        setLoading(false)
         router.refresh()
       }
     )
@@ -90,9 +120,7 @@ export function useAuth() {
       email,
       password,
       options: {
-        data: {
-          display_name: displayName,
-        },
+        data: { display_name: displayName },
       },
     })
 
@@ -102,7 +130,6 @@ export function useAuth() {
       return { success: false, error: authError.message }
     }
 
-    setLoading(false)
     return { success: true, data }
   }
 
@@ -111,6 +138,7 @@ export function useAuth() {
     setLoading(true)
     setError(null)
 
+    console.log('--- [useAuth] Вызов метода login для:', email)
     const { data, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -122,7 +150,13 @@ export function useAuth() {
       return { success: false, error: authError.message }
     }
 
-    setLoading(false)
+    // Если событие onAuthStateChange задерживается, подталкиваем его принудительно
+    setTimeout(() => {
+      if (window.location.pathname === '/login') {
+        window.location.href = '/tasks'
+      }
+    }, 500)
+
     return { success: true, data }
   }
 
@@ -132,7 +166,7 @@ export function useAuth() {
     await supabase.auth.signOut()
     setUser(null)
     setLoading(false)
-    router.push('/login')
+    window.location.href = '/login'
   }
 
   return {
