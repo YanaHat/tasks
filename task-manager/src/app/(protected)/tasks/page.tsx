@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client' 
 import { TaskCard } from '@/components/tasks/TaskCard'
 import type { Database } from '@/types/supabase'
+import { useSearchParams } from 'next/navigation'
 import styles from './Tasks.module.css'
 
 type Task = Database['public']['Tables']['tasks']['Row']
@@ -14,6 +15,9 @@ export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  
+  const searchParams = useSearchParams()
+  const searchQuery = searchParams.get('search')?.toLowerCase() || ''
 
   const loadTasks = async () => {
     try {
@@ -59,6 +63,11 @@ export default function TasksPage() {
     }
   }
 
+  const filteredTasks = tasks.filter(task => 
+    task.title.toLowerCase().includes(searchQuery) || 
+    (task.description && task.description.toLowerCase().includes(searchQuery))
+  )
+
   if (error) {
     return (
       <div className="p-md bg-error-container text-on-error-container rounded-xl border border-error/20">
@@ -85,8 +94,8 @@ export default function TasksPage() {
           <p className={styles.subtitle}>
             Loading tasks...
           </p>
-        ) : tasks.length > 0 ? (
-          tasks.map((task) => (
+        ) : filteredTasks.length > 0 ? (
+          filteredTasks.map((task) => (
             <TaskCard 
               key={task.id}
               task={task} 
@@ -95,9 +104,17 @@ export default function TasksPage() {
           ))
         ) : (
           <div className={styles.emptyState}>
-            <span className={`material-symbols-outlined ${styles.emptyIcon}`}>task</span>
-            <p className={styles.emptyTitle}>No tasks found</p>
-            <p className={styles.emptySubtitle}>Get started by creating your very first task above.</p>
+            <span className={`material-symbols-outlined ${styles.emptyIcon}`}>
+              {searchQuery ? 'search_off' : 'task'}
+            </span>
+            <p className={styles.emptyTitle}>
+              {searchQuery ? 'No results found' : 'No tasks found'}
+            </p>
+            <p className={styles.emptySubtitle}>
+              {searchQuery 
+                ? `We couldn't find any tasks matching "${searchQuery}"`
+                : 'Get started by creating your very first task above.'}
+            </p>
           </div>
         )}
       </div>

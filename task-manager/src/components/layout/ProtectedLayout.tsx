@@ -1,6 +1,8 @@
 'use client'
 
 import React from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { Navbar } from './Navbar'
 import { useAuth } from '@/hooks/useAuth'
 import styles from './ProtectedLayout.module.css'
@@ -11,6 +13,32 @@ interface ProtectedLayoutProps {
 
 export const ProtectedLayout: React.FC<ProtectedLayoutProps> = ({ children }) => {
   const { user, loading } = useAuth()
+
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '')
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString())
+      
+      if (searchQuery) {
+        params.set('search', searchQuery)
+      } else {
+        params.delete('search')
+      }
+
+      if (pathname === '/tasks') {
+        router.push(`${pathname}?${params.toString()}`)
+      } else if (searchQuery) {
+        router.push(`/tasks?${params.toString()}`)
+      }
+    }, 300)
+
+    return () => clearTimeout(delayDebounceFn)
+  }, [searchQuery, pathname, router, searchParams])
 
   if (loading) {
     return (
@@ -39,15 +67,17 @@ export const ProtectedLayout: React.FC<ProtectedLayoutProps> = ({ children }) =>
           
           <div className={styles.actions}>
             <div className={styles.searchBar}>
-              <span className={`material-symbols-outlined ${styles.searchIcon}`}>
-                search
-              </span>
-              <input
-                className={styles.searchInput}
-                placeholder="Global search..."
-                type="text"
-              />
-            </div>
+            <span className={`material-symbols-outlined ${styles.searchIcon}`}>
+              search
+            </span>
+            <input
+              className={styles.searchInput}
+              placeholder="Search tasks..."
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
             
             <div className={styles.avatar}>
               {user.display_name?.substring(0, 2).toUpperCase()}
