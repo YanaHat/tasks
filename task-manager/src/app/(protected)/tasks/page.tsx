@@ -18,9 +18,14 @@ export default function TasksPage() {
   const loadTasks = async () => {
     try {
       setLoading(true)
+      
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError || !user) throw new Error('User not authorized')
+
       const { data, error: dbError } = await supabase
         .from('tasks')
         .select('*')
+        .eq('user_id', user.id) 
         .order('created_at', { ascending: false })
 
       if (dbError) throw dbError

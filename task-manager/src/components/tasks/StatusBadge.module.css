@@ -10,6 +10,17 @@
   text-transform: capitalize;
 }
 
+.admin {
+  background-color: var(--error-container, #ffdad6);
+  color: var(--error, #ba1a1a);
+  font-weight: 600;
+}
+
+.user {
+  background-color: var(--surface-container-high, #e1e2ec);
+  color: var(--on-surface-variant, #434655);
+}
+
 .todo {
   background-color: var(--surface-variant, #e1e2ec);
   color: var(--on-surface-variant, #434655);
