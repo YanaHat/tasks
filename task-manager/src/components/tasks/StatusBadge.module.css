@@ -1,0 +1,43 @@
+.badge {
+  display: inline-block;
+  padding: 5px 12px; 
+  border-radius: 9999px; 
+  font-family: 'Inter', sans-serif;
+  font-size: 11px; 
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.03em; 
+  text-transform: capitalize;
+}
+
+.todo {
+  background-color: var(--surface-variant, #e1e2ec);
+  color: var(--on-surface-variant, #434655);
+}
+
+.inProgress {
+  background-color: var(--secondary-container, #e8def8);
+  color: var(--on-secondary-container, #1d162a);
+  font-weight: 600;
+}
+
+.done {
+  background-color: rgba(46, 125, 50, 0.1); 
+  color: #2e7d32; 
+}
+
+.low {
+  background-color: rgba(115, 118, 134, 0.1); 
+  color: #434655; 
+}
+
+.medium {
+  background-color: rgba(0, 74, 198, 0.08); 
+  color: var(--primary, #004ac6); 
+}
+
+.high {
+  background-color: var(--error-container, #ffdad6);
+  color: var(--error, #ba1a1a);
+  font-weight: 600;
+}

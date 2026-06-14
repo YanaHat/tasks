@@ -1,0 +1,58 @@
+.editContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 800px; /* Убрали инлайн-стиль */
+  width: 100%;
+  margin: 0 auto;
+}
+
+.errorWrapper {
+  margin-top: 24px;
+}
+
+.errorAlert {
+  padding: 16px;
+  background-color: var(--error-container);
+  color: var(--on-error-container);
+  border-radius: 12px;
+  border: 1px solid rgba(186, 26, 26, 0.2);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+}
+
+.backButton {
+  margin-top: 16px;
+}
+
+.headerRow {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .headerRow {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.deleteButton {
+  border-color: var(--error) !important;
+  color: var(--error) !important;
+  background-color: transparent !important;
+}
+
+.deleteButton:hover {
+  background-color: rgba(186, 26, 26, 0.06) !important;
+}
+
+.loadingText {
+  text-align: center;
+  margin-top: 40px;
+  color: var(--on-surface-variant);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+}

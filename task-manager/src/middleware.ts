@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  // Временно разрешаем переход на любые страницы без проверок
+  // Временно разрешаю переход на любые страницы без проверок
   return NextResponse.next()
 }
 

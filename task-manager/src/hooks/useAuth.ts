@@ -16,7 +16,6 @@ export function useAuth() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Функция для получения профиля пользователя по его ID с ограничением по времени
   async function fetchUserProfile(userId: string): Promise<AuthUser | null> {
     const defaultUser: AuthUser = {
       id: userId,
@@ -27,7 +26,6 @@ export function useAuth() {
     try {
       console.log('--- [useAuth] Шаг 2: Начинаем запрос профиля для ID:', userId)
 
-      // Гонка: запрос к базе против таймаута в 1.5 секунды
       const profileData = await Promise.race([
         supabase
           .from('profiles')
@@ -58,7 +56,6 @@ export function useAuth() {
     }
   }
 
-  // Следим за состоянием сессии при инициализации приложения
   useEffect(() => {
     const initializeAuth = async () => {
       try {
@@ -79,17 +76,14 @@ export function useAuth() {
 
     initializeAuth()
 
-    // Подписываемся на изменения состояния (login / logout / session refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('--- [useAuth] Событие:', event)
 
         if (session?.user) {
-          // Запрашиваем профиль (он разрешится либо базой, либо таймаутом через 1.5 сек)
           const profile = await fetchUserProfile(session.user.id)
           setUser(profile)
           
-          // Проверяем, где находится пользователь
           const isAuthPage = window.location.pathname === '/login' || window.location.pathname === '/register'
           
           if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && isAuthPage) {
@@ -111,7 +105,6 @@ export function useAuth() {
     }
   }, [router])
 
-  // Регистрация (Email + Password + Display Name)
   const register = async (email: string, password: string, displayName: string) => {
     setLoading(true)
     setError(null)
@@ -133,7 +126,6 @@ export function useAuth() {
     return { success: true, data }
   }
 
-  // Вход (Email + Password)
   const login = async (email: string, password: string) => {
     setLoading(true)
     setError(null)
@@ -150,7 +142,6 @@ export function useAuth() {
       return { success: false, error: authError.message }
     }
 
-    // Если событие onAuthStateChange задерживается, подталкиваем его принудительно
     setTimeout(() => {
       if (window.location.pathname === '/login') {
         window.location.href = '/tasks'
@@ -160,7 +151,6 @@ export function useAuth() {
     return { success: true, data }
   }
 
-  // Выход из системы
   const logout = async () => {
     setLoading(true)
     await supabase.auth.signOut()

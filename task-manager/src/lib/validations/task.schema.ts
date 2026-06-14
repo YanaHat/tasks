@@ -1,13 +1,32 @@
 import { z } from 'zod'
 
-export const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+export const taskSchema = z.object({
+  title: z
+    .string()
+    .min(3, 'Title must be at least 3 characters long')
+    .max(100, 'Title cannot exceed 100 characters'),
+  
+  description: z
+    .string()
+    .max(1000, 'Description cannot exceed 1000 characters')
+    .optional()
+    .or(z.literal('')), 
+
+  status: z.enum(['todo', 'in_progress', 'done'] as const, {
+    error: 'Invalid status type',
+  }),
+
+  priority: z.enum(['low', 'medium', 'high'] as const, {
+    error: 'Invalid priority type',
+  }),
+
+  due_date: z
+    .string()
+    .refine((val) => !val || !isNaN(Date.parse(val)), {
+      message: 'Invalid date format',
+    })
+    .optional()
+    .or(z.literal('')),
 })
 
-export const registerSchema = loginSchema.extend({
-  displayName: z.string().min(2, 'Display name must be at least 2 characters').max(50),
-})
-
-export type LoginFormData = z.infer<typeof loginSchema>
-export type RegisterFormData = z.infer<typeof registerSchema>
+export type TaskFormData = z.infer<typeof taskSchema>

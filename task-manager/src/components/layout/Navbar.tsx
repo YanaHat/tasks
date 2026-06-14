@@ -10,7 +10,6 @@ export const Navbar: React.FC = () => {
   const { user, logout, isAdmin } = useAuth()
   const pathname = usePathname()
 
-  // Хелпер для динамического вычисления классов навигации
   const getLinkClass = (path: string) => {
     const isActive = pathname.startsWith(path)
     return `${styles.link} ${isActive ? styles.linkActive : ''}`

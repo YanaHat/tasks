@@ -1,0 +1,157 @@
+.card {
+  background-color: var(--surface-container-lowest, #ffffff);
+  border: 1px solid rgba(195, 198, 215, 0.2); 
+  border-radius: 12px; 
+  padding: 16px; 
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05); 
+  display: flex;
+  flex-direction: column;
+  gap: 16px; 
+  transition: all 0.2s ease-in-out;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
+}
+
+.infoSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; 
+  overflow: hidden;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px; 
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px; 
+  font-weight: 600;
+  color: var(--on-surface);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px; 
+}
+
+@media (min-width: 640px) {
+  .title {
+    max-width: 448px;
+  }
+}
+
+.description {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px; 
+  color: var(--on-surface-variant);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 576px; 
+}
+
+.dateContainer {
+  display: flex;
+  align-items: center;
+  gap: 4px; 
+  font-size: 11px;
+}
+
+.dateNormal {
+  color: var(--on-surface-variant);
+}
+
+.dateOverdue {
+  color: var(--error);
+  font-weight: 600;
+}
+
+.overdueBadge {
+  text-transform: uppercase;
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+.actionsSection {
+  display: flex;
+  align-items: center;
+  gap: 16px; 
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+
+@media (min-width: 640px) {
+  .actionsSection {
+    align-self: center; 
+  }
+}
+
+.selectWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.select {
+  background-color: var(--surface-container-low);
+  border: 1px solid rgba(195, 198, 215, 0.3); 
+  border-radius: 8px; 
+  padding: 6px 32px 6px 12px; 
+  font-family: 'Inter', sans-serif;
+  font-size: 11px; 
+  color: var(--on-surface);
+  appearance: none;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.select:focus {
+  border-color: var(--primary);
+}
+
+.selectIcon {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 12px !important; 
+  color: var(--on-surface-variant);
+}
+
+.editButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px; 
+  border-radius: 6px; 
+  color: var(--outline);
+  text-decoration: none;
+  transition: all 0.15s ease-in-out;
+}
+
+.editButton:hover {
+  background-color: var(--surface-container-high);
+  color: var(--primary);
+}
+
+.editButton:active {
+  transform: scale(0.9);
+}

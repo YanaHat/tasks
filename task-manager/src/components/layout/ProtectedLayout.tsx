@@ -23,7 +23,6 @@ export const ProtectedLayout: React.FC<ProtectedLayoutProps> = ({ children }) =>
     )
   }
 
-  // Если пользователя нет, редирект произойдет в хуке/middleware, подстраховываемся null
   if (!user) return null
 
   return (

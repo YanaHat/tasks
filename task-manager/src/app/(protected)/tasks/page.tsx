@@ -1,46 +1,63 @@
-import React from 'react'
+'use client'
+
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/client' 
 import { TaskCard } from '@/components/tasks/TaskCard'
-import { revalidatePath } from 'next/cache'
 import type { Database } from '@/types/supabase'
-import styles from './Tasksp.module.css'
+import styles from './Tasks.module.css'
 
 type Task = Database['public']['Tables']['tasks']['Row']
 
-// Server Action для быстрого изменения статуса inline без перезагрузки страницы
-async function updateTaskStatusAction(formData: FormData) {
-  'use server'
-  const taskId = formData.get('taskId') as string
-  const newStatus = formData.get('status') as Task['status']
-
-  if (!taskId || !newStatus) return
-
+export default function TasksPage() {
   const supabase = createClient()
-  await supabase
-    .from('tasks')
-    .update({ status: newStatus, updated_at: new Date().toISOString() })
-    .eq('id', taskId)
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  revalidatePath('/tasks')
-}
+  const loadTasks = async () => {
+    try {
+      setLoading(true)
+      const { data, error: dbError } = await supabase
+        .from('tasks')
+        .select('*')
+        .order('created_at', { ascending: false })
 
-export default async function TasksPage() {
-  const supabase = createClient()
-  
-  // Получаем текущую сессию пользователя
-  const { data: { user } } = await supabase.auth.getUser()
-  
-  // Запрашиваем задачи из базы данных с автоматической сортировкой по убыванию даты
-  const { data: tasks, error } = await supabase
-    .from('tasks')
-    .select('*')
-    .order('created_at', { ascending: false })
+      if (dbError) throw dbError
+      setTasks(data || [])
+    } catch (err: any) {
+      setError(err.message || 'Failed to load tasks')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadTasks()
+  }, [])
+
+  const handleStatusChange = async (taskId: string, nextStatus: Task['status']) => {
+    try {
+      setTasks((prevTasks) =>
+        prevTasks.map((t) => (t.id === taskId ? { ...t, status: nextStatus } : t))
+      )
+
+      const { error: updateError } = await supabase
+        .from('tasks')
+        .update({ status: nextStatus, updated_at: new Date().toISOString() })
+        .eq('id', taskId)
+
+      if (updateError) throw updateError
+    } catch (err: any) {
+      console.error('Error updating task status:', err)
+      loadTasks()
+    }
+  }
 
   if (error) {
     return (
       <div className="p-md bg-error-container text-on-error-container rounded-xl border border-error/20">
-        Error loading tasks: {error.message}
+        Error loading tasks: {error}
       </div>
     )
   }
@@ -59,28 +76,17 @@ export default async function TasksPage() {
       </div>
 
       <div className={styles.list}>
-        {tasks && tasks.length > 0 ? (
+        {loading ? (
+          <p className={styles.subtitle}>
+            Loading tasks...
+          </p>
+        ) : tasks.length > 0 ? (
           tasks.map((task) => (
-            <form key={task.id} action={updateTaskStatusAction}>
-              <input type="hidden" name="taskId" value={task.id} />
-              <input type="hidden" id={`status-input-${task.id}`} name="status" defaultValue={task.status} />
-              
-              <button type="submit" id={`submit-btn-${task.id}`} className={styles.hiddenSubmit} />
-
-              <TaskCard 
-                task={task} 
-                onStatusChange={(id, nextStatus) => {
-                  // 1. Находим скрытый инпут статуса именно этой формы и меняем значение
-                  const statusInput = document.getElementById(`status-input-${id}`) as HTMLInputElement
-                  const submitBtn = document.getElementById(`submit-btn-${id}`) as HTMLButtonElement
-                  
-                  if (statusInput && submitBtn) {
-                    statusInput.value = nextStatus
-                    submitBtn.click()
-                  }
-                }}
-              />
-            </form>
+            <TaskCard 
+              key={task.id}
+              task={task} 
+              onStatusChange={handleStatusChange} 
+            />
           ))
         ) : (
           <div className={styles.emptyState}>
