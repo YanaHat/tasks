@@ -24,7 +24,6 @@ export function useAuth() {
     }
 
     try {
-      console.log('--- [useAuth] Шаг 2: Начинаем запрос профиля для ID:', userId)
 
       const profileData = await Promise.race([
         supabase
@@ -40,11 +39,9 @@ export function useAuth() {
       const { data: profile, error: dbError } = profileData
 
       if (dbError || !profile) {
-        console.log('--- [useAuth] Шаг 2a: Профиль не найден, выдаем дефолт:', dbError)
         return defaultUser
       }
 
-      console.log('--- [useAuth] Шаг 2б: Профиль успешно получен:', profile)
       return {
         id: profile.id,
         display_name: profile.display_name,
@@ -87,7 +84,6 @@ export function useAuth() {
           const isAuthPage = window.location.pathname === '/login' || window.location.pathname === '/register'
           
           if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && isAuthPage) {
-            console.log('--- [useAuth] Редирект подтвержден! Уводим на /tasks')
             window.location.href = '/tasks'
             return
           }
@@ -130,7 +126,6 @@ export function useAuth() {
     setLoading(true)
     setError(null)
 
-    console.log('--- [useAuth] Вызов метода login для:', email)
     const { data, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,

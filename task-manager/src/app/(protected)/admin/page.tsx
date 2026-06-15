@@ -19,6 +19,7 @@ type Task = {
   title: string
   status: 'todo' | 'in_progress' | 'done'
   priority: string
+  due_date: string | null 
 }
 
 export default function AdminPage() {
@@ -68,7 +69,7 @@ export default function AdminPage() {
     setSelectedUser(profile)
     const { data: tasks } = await supabase
       .from('tasks')
-      .select('id, title, status, priority')
+      .select('id, title, status, priority, due_date')
       .eq('user_id', profile.id)
       .order('created_at', { ascending: false })
     
@@ -81,6 +82,18 @@ export default function AdminPage() {
     await supabase
       .from('tasks')
       .update({ status: nextStatus, updated_at: new Date().toISOString() })
+      .eq('id', taskId)
+  }
+
+  const handleAdminDateChange = async (taskId: string, nextDate: string) => {
+    const formattedDate = nextDate ? nextDate : null
+    setUserTasks(prev => 
+      prev.map(t => t.id === taskId ? { ...t, due_date: formattedDate } : t)
+    )
+    
+    await supabase
+      .from('tasks')
+      .update({ due_date: formattedDate, updated_at: new Date().toISOString() })
       .eq('id', taskId)
   }
 
@@ -172,7 +185,16 @@ export default function AdminPage() {
                     <span className={adminStyles.taskTitle}>{task.title}</span>
                   </div>
 
-                  <div className={adminStyles.taskControls}>
+                  <div className={taskStyles.taskControls || adminStyles.taskControls}>
+                    <div className={taskStyles.selectWrapper}>
+                      <input
+                        type="date"
+                        value={task.due_date ? task.due_date.substring(0, 10) : ''}
+                        onChange={(e) => handleAdminDateChange(task.id, e.target.value)}
+                        className={taskStyles.select}
+                      />
+                    </div>
+
                     <div className={taskStyles.selectWrapper}>
                       <select
                         value={task.status}

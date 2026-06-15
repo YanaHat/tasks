@@ -28,7 +28,7 @@ export default function LoginPage() {
     const result = await login(data.email, data.password)
 
     if (result.success) {
-      router.push('/tasks')
+      window.location.href = '/tasks'
     } else {
       setServerError(result.error || 'Failed to sign in')
     }
